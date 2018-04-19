@@ -31,10 +31,12 @@ import no.russesamfunnet.storage.StorageService;
 @RestController
 public class pictureserverController {
 	
-	@Autowired
-	private StorageService storageService;
+	private final StorageService storageService;
 	
-
+	@Autowired
+    public pictureserverController(StorageService storageService) {
+        this.storageService = storageService;
+    }
 	
 	@RequestMapping(value="/hello", produces=MediaType.APPLICATION_JSON_VALUE)
 	public String hello(@RequestParam("name") String name){
@@ -69,14 +71,12 @@ public class pictureserverController {
     }
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("name") String name, 
-            RedirectAttributes redirectAttributes) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("name") String name) {
 
         storageService.store(file, name);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
+        
 
-        return "wah";
+        return name;
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
